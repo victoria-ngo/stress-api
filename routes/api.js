@@ -1,80 +1,61 @@
-// Below we will use the Express Router to define a read only API endpoint
-// Express will listen for API requests and respond accordingly
-import express from 'express'
-const router = express.Router()
+import express from 'express';
+import { PrismaClient } from '@prisma/client';
+const router = express.Router();
+const prisma = new PrismaClient();
 
-// Set this to match the model name in your Prisma schema
-const model = 'student_stress_levels'
-
-// Prisma lets NodeJS communicate with MongoDB
-// Let's import and initialize the Prisma client
-// See also: https://www.prisma.io/docs
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
-
-
-// ----- basic findMany() -------
-// This endpoint uses the Prisma schema defined in /prisma/schema.prisma
-// This gives us a cleaner data structure to work with. 
+// GET first 10 student stress records
 router.get('/student_stress_levels', async (req, res) => {
-    try {
-        // fetch first 10 records from the database with no filter
-        const result = await prisma.student_stress_levels.findMany({
-            take: 10
-        })
-        res.send(result)
-    } catch (err) {
-        console.log(err)
-        res.status(500).send(err)
-    }
-})
+  try {
+    const records = await prisma.student_stress_levels.findMany({ take: 10 });
+    res.json(records);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch records' });
+  }
+});
 
-
-// ----- findMany() with search ------- 
-// Accepts optional search parameter to filter by name field
-// See also: https://www.prisma.io/docs/orm/reference/prisma-client-reference#examples-7
+// SEARCH by academic performance or stress level
 router.get('/search', async (req, res) => {
-    try {
-        // get search terms from query string, default to empty string
-        const searchTerms = req.query.terms || ''
-        // fetch the records from the database
-        const result = await prisma[model].findMany({
-            where: {
-                name: {
-                    contains: searchTerms,
-                    mode: 'insensitive'  // case-insensitive search
-                }
-            },
-            orderBy: { name: 'asc' },
-            take: 10
-        })
-        res.send(result)
-    } catch (err) {
-        console.log(err)
-        res.status(500).send(err)
-    }
-})
+  const { academicPerformance, stressLevel } = req.query;
+  try {
+    const records = await prisma.student_stress_levels.findMany({
+      where: {
+        ...(academicPerformance && { How_would_you_rate_you_academic_performance_____ : parseInt(academicPerformance) }),
+        ...(stressLevel && { How_would_you_rate_your_stress_levels_ : parseInt(stressLevel) })
+      },
+      take: 10
+    });
+    res.json(records);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Search failed' });
+  }
+});
 
+// POST new student stress record
+router.post('/student_stress_levels', async (req, res) => {
+  try {
+    const newRecord = await prisma.student_stress_levels.create({
+      data: req.body
+    });
+    res.json(newRecord);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to create record' });
+  }
+});
 
-// ----- findRaw() -------
-// Returning Raw records from MongoDB
-// This endpoint does not use any schema. 
-// This is can be useful for testing and debugging.
+// RAW MongoDB query
 router.get('/raw', async (req, res) => {
-    try {
-        // raw queries use native MongoDB query syntax
-        // e.g. "limit" instead of "take"
-        const options = { limit: 10 };
-        const results = await prisma.studen_stress_levels.aggregateRaw({ pipeline: [{ $limit: 10 }] });
-        res.send(results);
-    } catch (err) {
-        console.log(err)
-        res.status(500).send(err)
-    }
-})
+  try {
+    const results = await prisma.student_stress_levels.aggregateRaw({
+      pipeline: [{ $limit: 10 }]
+    });
+    res.json(results);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Raw query failed' });
+  }
+});
 
-
-// export the api routes for use elsewhere in our app 
-// (e.g. in index.js )
 export default router;
-
