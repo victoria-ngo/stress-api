@@ -1,0 +1,114 @@
+Reset some defaults
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', 'Helvetica', sans-serif;
+}
+
+body {
+  background-color: 
+#f4f9fe;
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* Container */
+.container {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  width: 100%;
+  max-width: 450px;
+}
+
+/* Headings */
+h1, h2 {
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* Form elements */
+input[type="text"],
+input[type="email"],
+input[type="number"],
+textarea,
+select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid 
+#e0e0e0;
+  border-radius: 8px;
+  background-color: 
+#fafafa;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: 
+#007bff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+/* Button */
+button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: 
+#007bff;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: 
+#0056b3;
+}
+
+/* Minimal table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+  font-size: 0.95rem;
+}
+
+th, td {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid 
+#e0e0e0;
+}
+
+th {
+  background-color: 
+#f1f3f5;
+  font-weight: 600;
+}
+
+/* Small subtle details */
+a {
+  color: 
+#007bff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
